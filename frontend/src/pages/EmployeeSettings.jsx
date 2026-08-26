@@ -36,7 +36,10 @@ function EmployeeSettings() {
 
         try {
 
-            const response = await changePassword(form);
+            const response = await changePassword({
+                current_password: form.old_password,
+                new_password: form.new_password
+            });
 
             alert(response.message);
 
