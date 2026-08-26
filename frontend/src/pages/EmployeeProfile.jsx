@@ -6,7 +6,6 @@ import ProfileHeader from "../components/profile/ProfileHeader";
 import PersonalTab from "../components/profile/PersonalTab";
 import ProfessionalTab from "../components/profile/ProfessionalTab";
 import DocumentsTab from "../components/profile/DocumentsTab";
-import SecurityTab from "../components/profile/SecurityTab";
 
 import {
     getProfile,
@@ -197,28 +196,6 @@ function EmployeeProfile() {
 
                 </li>
 
-                <li className="nav-item">
-
-                    <button
-
-                        className={`nav-link ${
-                            activeTab === "security"
-                                ? "active"
-                                : ""
-                        }`}
-
-                        onClick={() =>
-                            setActiveTab("security")
-                        }
-
-                    >
-
-                        Security
-
-                    </button>
-
-                </li>
-
             </ul>
 
             <div className="card border-0 shadow">
@@ -265,25 +242,11 @@ function EmployeeProfile() {
 
                     }
 
-                    {
-
-                        activeTab === "security" && (
-
-                            <SecurityTab />
-
-                        )
-
-                    }
-
                 </div>
 
             </div>
 
             {
-
-                activeTab !== "security"
-
-                &&
 
                 activeTab !== "documents"
 
