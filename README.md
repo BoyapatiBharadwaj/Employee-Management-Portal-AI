@@ -334,3 +334,100 @@ Architecture Summary
 The system is designed as a modular HR platform rather than a standalone chatbot. The core application manages structured employee data through FastAPI and PostgreSQL, while the AI layer provides natural-language access to relevant HR information under role-based security controls.
 
 The AI component combines application-level routing and database logic with a locally hosted Ollama/TinyLlama model, allowing the system to combine structured company data with natural-language assistance.
+
+Handover and Setup Instructions
+
+Prerequisites
+
+The following software is required:
+
+- Git
+- Docker
+- Docker Compose
+
+For AI functionality, Ollama should be available on the host machine with the required model configured.
+
+Clone the Repository
+
+git clone https://github.com/chinthavishnupriya/Employee-Management-Portal-AI.git
+
+cd Employee-Management-Portal-AI
+
+Environment Configuration
+
+Create a .env file in the project root.
+
+Example:
+
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=<your-password>
+POSTGRES_DB=employee_management
+OLLAMA_HOST=<your-ollama-host>
+
+Do not commit the .env file to GitHub.
+
+Run the Application with Docker
+
+From the project root:
+
+docker compose up -d --build
+
+Check the running containers:
+
+docker ps
+
+The application consists of:
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+- Backend API documentation: http://localhost:8000/docs
+- PostgreSQL: port 5432
+
+Stop the Application
+
+docker compose down
+
+Restart the Application
+
+docker compose up -d
+
+Project Handover
+
+The project is structured into frontend, backend, database and AI components.
+
+The frontend is built using React and communicates with the FastAPI backend through HTTP APIs.
+
+The backend handles authentication, business logic, database operations and AI-related requests.
+
+PostgreSQL stores employee and HR information.
+
+The AI layer provides role-aware assistance using application data and the local Ollama/TinyLlama model.
+
+A new team member should review the project architecture, README, backend routers and services, frontend pages and services, database models, and AI components before making changes.
+
+Proposed Use Cases
+
+1. AI Employee Performance Insights
+
+The existing employee and performance modules can be extended with an AI feature that analyzes employee performance information and provides useful summaries and improvement suggestions.
+
+This builds on the existing employee and performance functionality.
+
+2. AI Leave and Attendance Analysis
+
+The existing attendance and leave modules can be combined to provide AI-based analysis of attendance patterns, leave usage and related HR information.
+
+This extends the existing attendance and leave functionality.
+
+3. Payroll Insights
+
+The existing employee and payroll modules can be extended to provide AI-assisted payroll summaries and insights using salary, bonus, allowances and deductions already stored in the system.
+
+This builds directly on the existing payroll functionality.
+
+4. Employee Retention and Risk Insights
+
+Existing employee, attendance, leave and performance information can be combined to provide HR with insights about employees who may require additional attention or support.
+
+This extends the existing HR data and analytics functionality rather than introducing an unrelated feature.
+
