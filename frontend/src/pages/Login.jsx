@@ -36,9 +36,6 @@ function Login() {
             }
         );
 
-        console.log("========== LOGIN RESPONSE ==========");
-        console.log(response.data);
-
         localStorage.clear();
         sessionStorage.clear();
 
@@ -62,30 +59,15 @@ function Login() {
             JSON.stringify(response.data.user || {})
         );
 
-        console.log("========== LOCAL STORAGE ==========");
-        console.log("TOKEN:", localStorage.getItem("access_token"));
-        console.log("ROLE:", localStorage.getItem("role"));
-        console.log("EMPLOYEE ID:", localStorage.getItem("employee_id"));
-        console.log("USER:", localStorage.getItem("user"));
-
         if (response.data.role === "Admin") {
             navigate("/dashboard");
+        } else if (["Superior", "CEO"].includes(response.data.role)) {
+            navigate("/manager/performance");
         } else {
             navigate("/employee/dashboard");
         }
 
     } catch (error) {
-
-    console.log("FULL ERROR:", error);
-
-    if (error.response) {
-        console.log("STATUS:", error.response.status);
-        console.log("DATA:", error.response.data);
-    }
-
-    if (error.request) {
-        console.log("REQUEST:", error.request);
-    }
 
     alert("Login Failed");
 }

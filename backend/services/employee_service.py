@@ -47,8 +47,19 @@ def get_employees():
     db: Session = SessionLocal()
 
     try:
-
-        return db.query(Employee).all()
+        employees = db.query(Employee).all()
+        return [{
+            "id": emp.id,
+            "employee_id": emp.employee_id,
+            "full_name": emp.full_name,
+            "email": emp.email,
+            "department_id": emp.department_id,
+            "department_name": emp.department.department_name if emp.department else None,
+            "designation": emp.designation,
+            "salary": emp.salary,
+            "superior_id": emp.superior_id,
+            "superior_name": emp.superior.full_name if emp.superior else None,
+        } for emp in employees]
 
     finally:
         db.close()
@@ -253,7 +264,13 @@ def employee_dashboard(current_user):
 
                 "designation": employee.designation,
 
-                "department": employee.department.department_name
+                "department": employee.department.department_name,
+
+                "superior": {
+                    "id": employee.superior.id if employee.superior else None,
+                    "name": employee.superior.full_name if employee.superior else None,
+                    "email": employee.superior.email if employee.superior else None,
+                }
 
             },
 

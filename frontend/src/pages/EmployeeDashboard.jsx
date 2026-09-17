@@ -86,6 +86,18 @@ function EmployeeDashboard() {
 
             />
 
+            <div className="card border-0 shadow-sm mt-4">
+                <div className="card-body">
+                    <div className="text-muted small">Current Superior / Reporting Manager</div>
+                    <div className="fw-bold fs-5 mt-1">
+                        {dashboard.employee?.superior?.name || "No Superior Assigned"}
+                    </div>
+                    {dashboard.employee?.superior?.email && (
+                        <div className="text-muted">{dashboard.employee.superior.email}</div>
+                    )}
+                </div>
+            </div>
+
             {/* Today's Attendance */}
 
             <div className="mt-4">

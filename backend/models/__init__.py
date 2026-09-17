@@ -8,3 +8,7 @@ from .performance import Performance
 from .onboarding import Onboarding
 from .offboarding import Offboarding
 from .employee_document import EmployeeDocument
+from .hierarchy import EmployeeSuperiorHistory
+from .monthly_performance import MonthlyPerformance
+from .audit import AuditLog
+from .notification import Notification

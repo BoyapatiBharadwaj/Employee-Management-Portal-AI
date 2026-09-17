@@ -75,6 +75,16 @@ function Sidebar() {
       icon: <FaStar />,
     },
     {
+      name: "Hierarchy Management",
+      path: "/hierarchy-management",
+      icon: <FaUsers />,
+    },
+    {
+      name: "Performance Insights",
+      path: "/performance-insights",
+      icon: <FaChartBar />,
+    },
+    {
       name: "Onboarding",
       path: "/onboarding",
       icon: <FaUserPlus />,

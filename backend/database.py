@@ -3,49 +3,25 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# =====================================
-# Database URL
-# =====================================
-
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:Cpriya%2310*@localhost:5432/employee_management"
-)
-
-print("=" * 70)
-print("DATABASE_URL:", DATABASE_URL)
-print("=" * 70)
-
-# =====================================
-# SQLAlchemy Engine
-# =====================================
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL must be configured through the environment")
 
 engine = create_engine(
     DATABASE_URL,
-    echo=True,          # Shows SQL queries (for debugging)
-    future=True
+    echo=os.getenv("SQLALCHEMY_ECHO", "false").lower() == "true",
+    future=True,
+    pool_pre_ping=True,
 )
-
-# =====================================
-# Session Factory
-# =====================================
 
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
-    bind=engine
+    bind=engine,
 )
-
-# =====================================
-# Base Model
-# =====================================
 
 Base = declarative_base()
 
-
-# =====================================
-# Dependency (optional but recommended)
-# =====================================
 
 def get_db():
     db = SessionLocal()

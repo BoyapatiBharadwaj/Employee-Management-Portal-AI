@@ -8,6 +8,7 @@ function EmployeeSidebar() {
     const location = useLocation();
 
     const [profile, setProfile] = useState({});
+    const role = localStorage.getItem("role");
 
     useEffect(() => {
         loadProfile();
@@ -59,7 +60,7 @@ function EmployeeSidebar() {
                 <img
                     src={
                         profile.profile_photo
-                            ? `http://13.53.158.40:8000${profile.profile_photo}`
+                            ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${profile.profile_photo}`
                             : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
                     }
                     alt="Profile"
@@ -154,6 +155,35 @@ function EmployeeSidebar() {
                         My Performance
                     </Link>
                 </li>
+
+                <li className="nav-item mb-2">
+                    <Link
+                        to="/employee/monthly-performance"
+                        className={`nav-link ${
+                            isActive("/employee/monthly-performance")
+                                ? "bg-primary text-white rounded"
+                                : "text-white"
+                        }`}
+                    >
+                        Monthly Performance
+                    </Link>
+                </li>
+
+                {["Superior", "CEO", "Admin"].includes(role) && (
+                <li className="nav-item mb-2">
+                    <Link
+                        to="/manager/performance"
+                        className={`nav-link ${
+                            isActive("/manager/performance")
+                                ? "bg-primary text-white rounded"
+                                : "text-white"
+                        }`}
+                    >
+                        My Team / Evaluations
+                    </Link>
+                </li>
+
+                )}
 
                 <li className="nav-item mb-2">
                     <Link

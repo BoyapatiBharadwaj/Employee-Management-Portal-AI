@@ -431,3 +431,30 @@ Existing employee, attendance, leave and performance information can be combined
 
 This extends the existing HR data and analytics functionality rather than introducing an unrelated feature.
 
+
+## Groq + Docker Deployment
+
+The LLM integration now uses the Groq API rather than Ollama. The default model is `openai/gpt-oss-20b`, configurable through `GROQ_MODEL`. Groq's current documentation recommends GPT-OSS 20B as the replacement for the deprecated `llama-3.1-8b-instant` model; free-tier rate limits are account-specific.
+
+1. Copy `.env.example` to `.env`.
+2. Set `POSTGRES_PASSWORD`, `SECRET_KEY`, and `GROQ_API_KEY`.
+3. Keep `GROQ_MODEL=openai/gpt-oss-20b` unless you need another currently supported model.
+4. Run `docker compose up --build`.
+5. Open the frontend at `http://localhost:5173` and the API at `http://localhost:8000`.
+
+The backend Docker container runs the idempotent database upgrade before starting FastAPI. The monthly performance scheduler runs inside the backend process and checks the previous month hourly so completed evaluations are finalized, missing evaluations become `Pending Review`, and in-app reminders are generated for responsible Superiors.
+
+## Employee Hierarchy & Monthly Performance
+
+Implemented scope from the client requirements baseline:
+
+- One active Superior per employee, controlled by Admin.
+- Historical Superior assignments are retained.
+- Current Superior appears on the employee dashboard and monthly performance view.
+- Superior team view is restricted to direct reports.
+- Monthly 1–100 evaluations are accepted from the 25th through month-end.
+- Monthly performance combines Superior Rating 60%, Attendance 25%, and Leave 15%.
+- Overall scores remain on a 1–100 scale and use competition ranking.
+- Previous-month Performance Insights are available to Admin with department, Superior, employee, month, and rank filters through the API.
+- Finalized records are read-only for Superiors/Employees; Admin corrections are audited.
+- Audit records and in-app pending-review notifications are persisted in PostgreSQL.

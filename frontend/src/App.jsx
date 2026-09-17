@@ -29,6 +29,7 @@ import Onboarding from "./pages/Onboarding";
 // Components
 import AdminRoute from "./components/AdminRoute";
 import EmployeeRoute from "./components/EmployeeRoute";
+import ManagerRoute from "./components/ManagerRoute";
 import Offboarding from "./pages/Offboarding";
 // Others
 import NotFound from "./pages/NotFound";
@@ -39,6 +40,10 @@ import Notifications from "./pages/Notifications";
 import HRAssistant from "./pages/HRAssistant";
 import SentimentAnalysis from "./pages/SentimentAnalysis";
 import SemanticSearch from "./pages/SemanticSearch";
+import HierarchyManagement from "./pages/HierarchyManagement";
+import EmployeeMonthlyPerformance from "./pages/EmployeeMonthlyPerformance";
+import ManagerPerformance from "./pages/ManagerPerformance";
+import PerformanceInsights from "./pages/PerformanceInsights";
 function App() {
   return (
     <BrowserRouter>
@@ -111,6 +116,8 @@ function App() {
     </AdminRoute>
   }
 />
+        <Route path="/hierarchy-management" element={<AdminRoute><HierarchyManagement /></AdminRoute>} />
+        <Route path="/performance-insights" element={<AdminRoute><PerformanceInsights /></AdminRoute>} />
         <Route
   path="/documents"
   element={
@@ -233,6 +240,8 @@ function App() {
             </EmployeeRoute>
           }
         />
+        <Route path="/manager/performance" element={<ManagerRoute><ManagerPerformance /></ManagerRoute>} />
+        <Route path="/employee/monthly-performance" element={<EmployeeRoute><EmployeeMonthlyPerformance /></EmployeeRoute>} />
 
         <Route
           path="/employee/leave"

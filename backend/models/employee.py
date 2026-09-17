@@ -102,3 +102,25 @@ class Employee(Base):
     String(255),
     nullable=True
     )
+
+    superior_id = Column(
+    Integer,
+    ForeignKey("employees.id", ondelete="SET NULL"),
+    nullable=True,
+    index=True
+    )
+
+    superior = relationship(
+    "Employee",
+    remote_side=[id],
+    foreign_keys=[superior_id],
+    backref="direct_reports"
+    )
+
+    superior_history = relationship(
+    "EmployeeSuperiorHistory",
+    foreign_keys="EmployeeSuperiorHistory.employee_id",
+    back_populates="employee",
+    cascade="all, delete",
+    passive_deletes=True
+    )

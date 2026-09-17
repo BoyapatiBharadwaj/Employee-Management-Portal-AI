@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../services/api";
 
 const ResumeAnalyzer = () => {
 
@@ -26,8 +26,8 @@ const ResumeAnalyzer = () => {
             setLoading(true);
             setResult("");
 
-            const response = await axios.post(
-                "http://13.53.158.40:8000/resume/analyze",
+            const response = await api.post(
+                "/resume/analyze",
                 formData,
                 {
                     headers: {

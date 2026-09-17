@@ -1,47 +1,66 @@
 services:
   postgres:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: employee-postgres
-    restart: always
-
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-employee_management}
     ports:
       - "5432:5432"
-
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-employee_management}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: employee-backend
-    restart: always
-
+    restart: unless-stopped
     depends_on:
-      - postgres
-
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-employee_management}
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
+      SQLALCHEMY_ECHO: ${SQLALCHEMY_ECHO:-false}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      GROQ_API_KEY: ${GROQ_API_KEY:?Set GROQ_API_KEY in .env}
+      GROQ_MODEL: ${GROQ_MODEL:-openai/gpt-oss-20b}
+      GROQ_MAX_TOKENS: ${GROQ_MAX_TOKENS:-1200}
+      GROQ_TEMPERATURE: ${GROQ_TEMPERATURE:-0.2}
+      BUSINESS_TIMEZONE: ${BUSINESS_TIMEZONE:-Asia/Kolkata}
+      ATTENDANCE_LATE_PENALTY: ${ATTENDANCE_LATE_PENALTY:-1.0}
+      ATTENDANCE_ABSENCE_PENALTY: ${ATTENDANCE_ABSENCE_PENALTY:-10.0}
+      UNPLANNED_LEAVE_PENALTY: ${UNPLANNED_LEAVE_PENALTY:-10.0}
     ports:
       - "8000:8000"
+    volumes:
+      - backend_uploads:/app/backend/uploads
+      - rag_data:/app/backend/rag/chroma_db
 
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      OLLAMA_HOST: ${OLLAMA_HOST}
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
     container_name: employee-frontend
-    restart: always
-
+    restart: unless-stopped
     depends_on:
       - backend
-
     ports:
       - "5173:80"
 
 volumes:
   postgres_data:
+  backend_uploads:
+  rag_data:

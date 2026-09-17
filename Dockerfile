@@ -1,20 +1,23 @@
-# Use Python 3.10
-FROM python:3.10-slim
+FROM python:3.11-slim
 
-# Set working directory
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# Copy backend requirements
-COPY backend/requirements.txt .
+COPY backend/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+COPY backend ./backend
+COPY .env.example ./.env.example
 
-# Copy the entire project
-COPY . .
+RUN mkdir -p /app/backend/uploads/profile_photos \
+    /app/backend/uploads/documents \
+    /app/backend/uploads/resumes \
+    /app/backend/uploads/policies \
+    /app/backend/rag/chroma_db
 
-# Expose FastAPI port
 EXPOSE 8000
 
-# Start FastAPI
-CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "python -m backend.migrations.upgrade && python -m backend.seed && uvicorn backend.app:app --host 0.0.0.0 --port 8000"]

@@ -63,13 +63,6 @@ def get_employees_by_department(
     current_user: str = Depends(verify_token)
 ):
     return employee_service.get_employees_by_department(department_id)
-@router.get("/employee/dashboard")
-def employee_dashboard(
-    current_user: str = Depends(verify_token)
-):
-    return employee_service.employee_dashboard(
-        current_user
-    )
 # ==========================
 # Get Employee by ID
 # MUST be after /details

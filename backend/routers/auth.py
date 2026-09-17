@@ -55,130 +55,15 @@ def register(user: UserCreate):
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     db: Session = SessionLocal()
-
     try:
-
-        print("\n" + "=" * 70)
-        print("LOGIN REQUEST")
-        print("=" * 70)
-
         email = form_data.username.strip().lower()
+        db_user = db.query(User).filter(User.email.ilike(email)).first()
 
-        print("Entered Email :", repr(email))
+        if db_user is None or not verify_password(form_data.password, db_user.password):
+            return {"message": "Invalid email or password"}
 
-        # -----------------------------
-        # Database Information
-        # -----------------------------
-        print("\nDATABASE INFORMATION")
-
-        print(
-            "Current Database:",
-            db.execute(
-                text("SELECT current_database()")
-            ).scalar()
-        )
-
-        print(
-            "Current User:",
-            db.execute(
-                text("SELECT current_user")
-            ).scalar()
-        )
-
-        print(
-            "Server Address:",
-            db.execute(
-                text("SELECT inet_server_addr()")
-            ).scalar()
-        )
-
-        print(
-            "Server Port:",
-            db.execute(
-                text("SELECT inet_server_port()")
-            ).scalar()
-        )
-
-        # -----------------------------
-        # User Count
-        # -----------------------------
-        total = db.query(User).count()
-        print("\nTOTAL USERS:", total)
-
-        users = db.query(User).all()
-
-        print("\nUSERS TABLE")
-        print("-" * 70)
-
-        if not users:
-            print("No users found.")
-        else:
-            for u in users:
-                print(
-                    f"ID={u.id} | "
-                    f"Username={u.username} | "
-                    f"Email={u.email} | "
-                    f"Role={u.role}"
-                )
-
-        print("-" * 70)
-
-        # -----------------------------
-        # Search User
-        # -----------------------------
-        print("\nSearching user...")
-
-        db_user = (
-            db.query(User)
-            .filter(User.email.ilike(email))
-            .first()
-        )
-
-        print("Matched User:", db_user)
-
-        if db_user is None:
-            print("EMAIL NOT FOUND")
-            return {
-                "message": "Invalid email"
-            }
-
-        # -----------------------------
-        # Password Check
-        # -----------------------------
-        password_ok = verify_password(
-            form_data.password,
-            db_user.password
-        )
-
-        print("Password Match:", password_ok)
-
-        if not password_ok:
-            return {
-                "message": "Invalid password"
-            }
-
-        # -----------------------------
-        # Employee Lookup
-        # -----------------------------
-        emp = (
-            db.query(Employee)
-            .filter(Employee.email == db_user.email)
-            .first()
-        )
-
-        print("Employee:", emp)
-
-        # -----------------------------
-        # JWT Token
-        # -----------------------------
-        token = create_access_token(
-            {
-                "sub": db_user.email
-            }
-        )
-
-        print("LOGIN SUCCESS")
-        print("=" * 70)
+        emp = db.query(Employee).filter(Employee.email.ilike(db_user.email)).first()
+        token = create_access_token({"sub": db_user.email})
 
         return {
             "access_token": token,
@@ -192,6 +77,5 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
                 "role": db_user.role
             }
         }
-
     finally:
         db.close()
