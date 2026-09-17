@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import CheckConstraint, Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import Date
 from backend.database import Base
@@ -6,6 +6,7 @@ from backend.database import Base
 
 class Employee(Base):
     __tablename__ = "employees"
+    __table_args__ = (CheckConstraint("superior_id IS NULL OR superior_id <> id", name="ck_employee_not_own_superior"),)
 
     id = Column(Integer, primary_key=True, index=True)
 

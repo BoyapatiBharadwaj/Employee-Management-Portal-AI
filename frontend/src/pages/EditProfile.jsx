@@ -48,7 +48,7 @@ function EditProfile() {
             if (data.profile_photo) {
 
                 setPreview(
-                    `http://13.53.158.40:8000${data.profile_photo}`
+                    `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${data.profile_photo}`
                 );
 
             } else {

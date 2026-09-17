@@ -202,7 +202,9 @@ def cancel_leave(leave_id):
                 "message": "Leave not found"
             }
 
-        db.delete(leave)
+        if leave.status in {"Approved", "Rejected"}:
+            return {"message": "Processed leave requests cannot be cancelled."}
+        leave.status = "Cancelled"
         db.commit()
 
         return {

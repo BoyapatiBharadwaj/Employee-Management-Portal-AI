@@ -1,4 +1,3 @@
-<Route path="*" element={<NotFound />} />
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import EmployeeSettings from "./pages/EmployeeSettings";
 import Login from "./pages/Login";

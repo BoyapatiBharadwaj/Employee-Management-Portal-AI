@@ -44,7 +44,7 @@ function HierarchyManagement() {
         try {
             await assignSuperior(selected.id, {
                 superior_id: superiorId ? Number(superiorId) : null,
-                effective_from: new Date().toISOString().split("T")[0],
+                effective_from: new Date().toLocaleDateString("en-CA"),
             });
             alert("Reporting relationship updated.");
             await loadEmployees();
@@ -100,8 +100,8 @@ function HierarchyManagement() {
                                         <label className="form-label">Active Superior</label>
                                         <select className="form-select" value={superiorId} onChange={(e) => setSuperiorId(e.target.value)}>
                                             <option value="">No Superior / Top Level</option>
-                                            {employees.filter((item) => item.id !== selected.id).map((item) => (
-                                                <option key={item.id} value={item.id}>{item.full_name} — {item.designation}</option>
+                                            {employees.filter((item) => item.id !== selected.id && ["Superior", "CEO"].includes(item.user_role)).map((item) => (
+                                                <option key={item.id} value={item.id}>{item.full_name} — {item.user_role}</option>
                                             ))}
                                         </select>
                                     </div>

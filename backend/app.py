@@ -8,7 +8,8 @@ from fastapi.staticfiles import StaticFiles
 
 from backend.database import Base, engine, SessionLocal
 import backend.models
-from backend.services.hierarchy_performance_service import auto_finalize_previous_month
+from backend.services.hierarchy_performance_service import auto_finalize_previous_month, business_today
+from sqlalchemy import text
 from backend.routers import (
     home_router,
     employee_documents,
@@ -121,6 +122,18 @@ app.include_router(profile_photo.router)
 app.include_router(resume_router.router)
 app.include_router(hr_ai_router.router)
 app.include_router(sentiment_router.router)
+
+
+@app.get("/health/live")
+def health_live():
+    return {"status": "ok", "service": "employee-backend"}
+
+
+@app.get("/health/ready")
+def health_ready():
+    with engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
+    return {"status": "ready", "business_date": business_today(), "timezone": os.getenv("BUSINESS_TIMEZONE", "Asia/Kolkata")}
 
 
 @app.get("/")

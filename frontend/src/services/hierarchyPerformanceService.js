@@ -51,3 +51,13 @@ export async function getAuditLogs() {
     const response = await api.get("/audit-logs");
     return response.data;
 }
+
+export async function correctFinalizedPerformance(recordId, rating, feedback, reason) {
+    const response = await api.post("/performance/monthly/correct", { record_id: recordId, rating, feedback, reason });
+    return response.data;
+}
+
+export async function getRetentionStatus(employeeId = "") {
+    const response = await api.get("/retention/status", { params: employeeId ? { employee_id: employeeId } : {} });
+    return response.data;
+}

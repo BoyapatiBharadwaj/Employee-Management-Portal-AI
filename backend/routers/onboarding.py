@@ -1,53 +1,33 @@
-from fastapi import APIRouter, Depends
-
+from fastapi import APIRouter, Depends, HTTPException
 from backend.schemas import OnboardingCreate
-from backend.auth import verify_admin, verify_token
-from backend.models import User
+from backend.auth import verify_admin, get_current_user
+from backend.models import User, Employee
+from backend.database import SessionLocal
 from backend.services import onboarding_service
 
-router = APIRouter(
-    tags=["Onboarding"]
-)
+router = APIRouter(tags=["Onboarding"])
 
-
-# ==========================
-# Create Onboarding
-# ==========================
 @router.post("/onboarding")
-def create_onboarding(
-    onboarding: OnboardingCreate,
-    admin: User = Depends(verify_admin)
-):
+def create_onboarding(onboarding: OnboardingCreate, admin: User = Depends(verify_admin)):
     return onboarding_service.create_onboarding(onboarding)
 
-
-# ==========================
-# Get All Onboarding Records
-# ==========================
 @router.get("/onboarding")
-def get_onboarding(
-    current_user: str = Depends(verify_token)
-):
+def get_onboarding(admin: User = Depends(verify_admin)):
     return onboarding_service.get_onboarding()
 
-
-# ==========================
-# Get Employee Onboarding
-# ==========================
 @router.get("/onboarding/{employee_id}")
-def get_employee_onboarding(
-    employee_id: int,
-    current_user: str = Depends(verify_token)
-):
-    return onboarding_service.get_employee_onboarding(employee_id)
+def get_employee_onboarding(employee_id: int, current_user: User = Depends(get_current_user)):
+    if current_user.role == "Admin":
+        return onboarding_service.get_employee_onboarding(employee_id)
+    db = SessionLocal()
+    try:
+        emp = db.query(Employee).filter(Employee.email.ilike(current_user.email)).first()
+        if not emp or emp.id != employee_id:
+            raise HTTPException(status_code=403, detail="You can only view your own onboarding")
+        return onboarding_service.get_employee_onboarding(employee_id)
+    finally:
+        db.close()
 
-
-# ==========================
-# Delete Onboarding
-# ==========================
 @router.delete("/onboarding/{onboarding_id}")
-def delete_onboarding(
-    onboarding_id: int,
-    admin: User = Depends(verify_admin)
-):
+def delete_onboarding(onboarding_id: int, admin: User = Depends(verify_admin)):
     return onboarding_service.delete_onboarding(onboarding_id)

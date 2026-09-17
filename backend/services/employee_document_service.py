@@ -200,7 +200,7 @@ def reject_document(document_id: int):
 # Delete Document
 # ==========================================
 
-def delete_document(document_id: int):
+def delete_document(document_id: int, current_user: str):
 
     db: Session = SessionLocal()
 
@@ -211,10 +211,11 @@ def delete_document(document_id: int):
         ).first()
 
         if document is None:
+            return {"message": "Document not found."}
 
-            return {
-                "message": "Document not found."
-            }
+        employee = db.query(Employee).filter(Employee.email == current_user).first()
+        if employee is None or document.employee_id != employee.id:
+            return {"message": "You can only delete your own document."}
 
         if document.status != "Pending":
 

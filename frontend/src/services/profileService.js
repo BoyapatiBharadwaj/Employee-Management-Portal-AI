@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://13.53.158.40:8000";
+const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function authHeader() {
 

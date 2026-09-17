@@ -41,8 +41,19 @@ services:
       ATTENDANCE_LATE_PENALTY: ${ATTENDANCE_LATE_PENALTY:-1.0}
       ATTENDANCE_ABSENCE_PENALTY: ${ATTENDANCE_ABSENCE_PENALTY:-10.0}
       UNPLANNED_LEAVE_PENALTY: ${UNPLANNED_LEAVE_PENALTY:-10.0}
+      APPROVED_LEAVE_THRESHOLD_PERCENT: ${APPROVED_LEAVE_THRESHOLD_PERCENT:-10.0}
+      APPROVED_LEAVE_EXCESS_PENALTY: ${APPROVED_LEAVE_EXCESS_PENALTY:-1.0}
+      REJECTED_LEAVE_REQUEST_PENALTY: ${REJECTED_LEAVE_REQUEST_PENALTY:-1.0}
+      RETENTION_YEARS: ${RETENTION_YEARS:-7}
+      UPLOAD_MAX_MB: ${UPLOAD_MAX_MB:-20}
     ports:
       - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
     volumes:
       - backend_uploads:/app/backend/uploads
       - rag_data:/app/backend/rag/chroma_db
@@ -56,7 +67,13 @@ services:
     container_name: employee-frontend
     restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1/health-check >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
     ports:
       - "5173:80"
 

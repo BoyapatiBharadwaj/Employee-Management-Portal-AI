@@ -159,7 +159,7 @@ function DocumentList({
 
     <a
 
-        href={`http://13.53.158.40:8000${doc.file_path}`}
+        href={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${doc.file_path}`}
 
         target="_blank"
 

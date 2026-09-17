@@ -55,7 +55,7 @@ function EmployeeDetails() {
                         <img
                             src={
                                 employee.profile_photo
-                                    ? `http://13.53.158.40:8000${employee.profile_photo}`
+                                    ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${employee.profile_photo}`
                                     : "https://via.placeholder.com/180"
                             }
                             alt="Profile"

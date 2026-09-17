@@ -182,7 +182,7 @@ function DashboardNavbar() {
                         <img
                             src={
                                 profile.profile_photo
-                                    ? `http://13.53.158.40:8000${profile.profile_photo}`
+                                    ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${profile.profile_photo}`
                                     : "/images/admin.png"
                             }
                             alt="Admin"

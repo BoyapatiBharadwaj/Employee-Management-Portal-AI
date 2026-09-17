@@ -14,7 +14,7 @@ function ProfileHeader({ profile, onPhotoChange, uploading }) {
                 <img
                     src={
                         profile.profile_photo
-                            ? `http://13.53.158.40:8000${profile.profile_photo}?v=${Date.now()}`
+                            ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${profile.profile_photo}?v=${Date.now()}`
                             : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
                     }
                     alt="Profile"

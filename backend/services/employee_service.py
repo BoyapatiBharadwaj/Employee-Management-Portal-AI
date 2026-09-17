@@ -48,18 +48,23 @@ def get_employees():
 
     try:
         employees = db.query(Employee).all()
-        return [{
-            "id": emp.id,
-            "employee_id": emp.employee_id,
-            "full_name": emp.full_name,
-            "email": emp.email,
-            "department_id": emp.department_id,
-            "department_name": emp.department.department_name if emp.department else None,
-            "designation": emp.designation,
-            "salary": emp.salary,
-            "superior_id": emp.superior_id,
-            "superior_name": emp.superior.full_name if emp.superior else None,
-        } for emp in employees]
+        result = []
+        for emp in employees:
+            user = db.query(User).filter(User.email.ilike(emp.email)).first()
+            result.append({
+                "id": emp.id,
+                "employee_id": emp.employee_id,
+                "full_name": emp.full_name,
+                "email": emp.email,
+                "department_id": emp.department_id,
+                "department_name": emp.department.department_name if emp.department else None,
+                "designation": emp.designation,
+                "salary": emp.salary,
+                "superior_id": emp.superior_id,
+                "superior_name": emp.superior.full_name if emp.superior else None,
+                "user_role": user.role if user else None,
+            })
+        return result
 
     finally:
         db.close()
